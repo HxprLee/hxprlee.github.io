@@ -15,11 +15,37 @@
 }
 
 .glass-card {
+    position: relative;
     background: rgba(17, 23, 28, 0.7);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
-    border: 1px solid rgba(232, 214, 140, 0.1);
+    border: 1px solid rgba(255, 239, 175, 0.1);
     box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
+    overflow: hidden;
+}
+
+.glass-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(
+        400px circle at var(--mouse-x, 0px) var(--mouse-y, 0px),
+        rgba(255, 239, 175, 0.12),
+        transparent 70%
+    );
+    opacity: 0;
+    transition: opacity 0.5s ease;
+    pointer-events: none;
+    z-index: 10;
+}
+
+.glass-card:hover::before {
+    opacity: 1;
+}
+
+.glass-card > * {
+    position: relative;
+    z-index: 1;
 }
 
 @font-face {

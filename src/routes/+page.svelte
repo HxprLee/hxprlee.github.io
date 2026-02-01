@@ -48,6 +48,7 @@
   }
 
   let timerInterval: ReturnType<typeof setInterval>;
+  let lanyardInterval: ReturnType<typeof setInterval>;
 
   // --- Animation Logic ---
   let displayedName = "";
@@ -146,6 +147,15 @@
     audio.currentTime = percentage * duration;
   }
 
+  function handleMouseMove(e: MouseEvent) {
+    const card = e.currentTarget as HTMLElement;
+    const rect = card.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    card.style.setProperty('--mouse-x', `${x}px`);
+    card.style.setProperty('--mouse-y', `${y}px`);
+  }
+
   onMount(() => {
     mounted = true;
     visible = true;
@@ -157,10 +167,12 @@
       updateTime();
       updateCountdown();
     }, 1000);
+    lanyardInterval = setInterval(fetchLanyard, 60000);
   });
 
   onDestroy(() => {
     if (timerInterval) clearInterval(timerInterval);
+    if (lanyardInterval) clearInterval(lanyardInterval);
   });
 </script>
 
@@ -180,7 +192,7 @@
     
     {#if visible}
     <!-- Profile Card -->
-    <div in:fly={{ y: 20, duration: 600, delay: 100 }} class="col-span-1 md:col-span-2 lg:col-span-6 glass-card rounded-lg p-7 flex flex-col justify-between hover:border-primary/30 transition-colors duration-300">
+    <div in:fly={{ y: 20, duration: 600, delay: 100 }} class="col-span-1 md:col-span-2 lg:col-span-6 glass-card rounded-lg p-7 flex flex-col justify-between hover:border-primary/30 transition-colors duration-300" on:mousemove={handleMouseMove}>
       <div class="flex items-start gap-5">
         <div class="w-20 h-20 rounded-full bg-gray-300 overflow-hidden flex-shrink-0 border-[1.5px] border-primary">
              <img
@@ -217,7 +229,7 @@
     </div>
 
     <!-- Social Platforms -->
-    <div in:fly={{ y: 20, duration: 600, delay: 200 }} class="col-span-1 md:col-span-1 lg:col-span-4 glass-card rounded-lg p-7 flex flex-col hover:border-primary/30 transition-colors duration-300">
+    <div in:fly={{ y: 20, duration: 600, delay: 200 }} class="col-span-1 md:col-span-1 lg:col-span-4 glass-card rounded-lg p-7 flex flex-col hover:border-primary/30 transition-colors duration-300" on:mousemove={handleMouseMove}>
       <h2 class="text-2xl font-bold tracking-tight text-primary mb-2">Social Platforms</h2>
       <p class="text-base font-medium tracking-tight text-primary/90 mb-6">
         You may find me on these social platforms, though I mostly active on <button class="underline decoration-1 underline-offset-2 hover:text-white transition-colors" on:click={() => copyToClipboard('hxprlee')}>Discord <i class="fas fa-external-link-alt text-[10px]"></i></button>
@@ -239,7 +251,7 @@
     </div>
 
     <!-- Local Time -->
-    <div in:fly={{ y: 20, duration: 600, delay: 300 }} class="col-span-1 lg:col-span-2 glass-card rounded-lg p-7 flex flex-col justify-between hover:border-primary/30 transition-colors duration-300 min-h-[160px]">
+    <div in:fly={{ y: 20, duration: 600, delay: 300 }} class="col-span-1 lg:col-span-2 glass-card rounded-lg p-7 flex flex-col justify-between hover:border-primary/30 transition-colors duration-300 min-h-[160px]" on:mousemove={handleMouseMove}>
       <div>
         <h3 class="text-primary tracking-tight text-2xl font-semibold mb-1">Local Time</h3>
         <div class="flex items-baseline gap-2">
@@ -260,7 +272,7 @@
     </div>
 
     <!-- Skills & Objectives -->
-    <div in:fly={{ y: 20, duration: 600, delay: 400 }} class="col-span-1 md:col-span-2 lg:col-span-5 glass-card rounded-lg p-7 flex flex-col gap-5 hover:border-primary/30 transition-colors duration-300">
+    <div in:fly={{ y: 20, duration: 600, delay: 400 }} class="col-span-1 md:col-span-2 lg:col-span-5 glass-card rounded-lg p-7 flex flex-col gap-5 hover:border-primary/30 transition-colors duration-300" on:mousemove={handleMouseMove}>
       <div>
         <h3 class="text-primary tracking-tight font-semibold mb-3 text-2xl">What I've learned, so far...</h3>
         <div class="flex flex-wrap gap-2">
@@ -292,11 +304,11 @@
     </div>
 
     <!-- Discord Embed -->
-    <div in:fly={{ y: 20, duration: 600, delay: 500 }} class="col-span-1 md:row-span-2 lg:col-span-3 glass-card rounded-lg p-0 flex flex-col hover:border-primary/30 transition-colors duration-300 min-h-[200px]">
+    <div in:fly={{ y: 20, duration: 600, delay: 500 }} class="col-span-1 md:row-span-2 lg:col-span-3 glass-card rounded-lg p-0 flex flex-col hover:border-primary/30 transition-colors duration-300 min-h-[200px]" on:mousemove={handleMouseMove}>
       {#if lanyardData}
         <div class="flex flex-col items-left gap-3 mb-4">
-          <img class="w-full h-24 object-cover" alt="Background" src="https://w.wallhaven.cc/full/ly/wallhaven-ly8okr.png"/>
-          <div class="absolute ml-5 mt-9">
+          <img class="w-full h-[92px] object-cover" alt="Background" src="/imgs/banner.png"/>
+          <div class="absolute ml-5 mt-8">
             <img 
               src="https://cdn.discordapp.com/avatars/{DISCORD_ID}/{lanyardData.discord_user.avatar}.png" 
               alt="Avatar" 
@@ -311,8 +323,11 @@
             ></div>
           </div>
           <div class="flex flex-col overflow-hidden mt-5 ml-5">
-            <span class="text-primary font-bold text-base truncate leading-tight">{lanyardData.discord_user.display_name || lanyardData.discord_user.username}</span>
-            <span class="text-primary/50 text-xs font-bold truncate">@{lanyardData.discord_user.username}</span>
+            <div class="flex flex-row overflow-hidden gap-2">
+              <span class="text-primary font-bold text-xl truncate tracking-tight leading-tight">{lanyardData.discord_user.display_name || lanyardData.discord_user.username}</span>
+              <span class="bg-tag-bg/80 border border-primary/10 px-2 py-0 rounded-md text-xs font-semibold flex items-center gap-2 text-primary">{lanyardData.discord_user.primary_guild.tag}</span>
+            </div>
+            <span class="text-primary/50 text-xs font-extrabold tracking-tight truncate">@{lanyardData.discord_user.username}</span>
           </div>
         </div>
 
@@ -330,7 +345,7 @@
             </div>
           {:else if lanyardData.activities.length > 0}
             <div class="flex flex-col gap-2">
-              <span class="text-xs font-bold text-primary/40 uppercase tracking-wider">Playing {lanyardData.activities[0].name}</span>
+              <span class="text-xs font-extrabold text-primary/40 uppercase">Playing {lanyardData.activities[0].name}</span>
               <div class="flex items-center gap-3">
                 {#if lanyardData.activities[0].assets?.large_image}
                   <img 
@@ -344,14 +359,14 @@
                   </div>
                 {/if}
                 <div class="flex flex-col overflow-hidden span-1">
-                  <span class="text-xs font-bold text-primary truncate">{lanyardData.activities[0].details || 'Playing'}</span>
-                  <span class="text-xs text-primary/80 font-medium truncate">{lanyardData.activities[0].state || ''}</span>
-                  <span class="text-xs text-primary/60 font-medium truncate">{lanyardData.activities[0].assets.large_text}</span>
+                  <span class="text-sm tracking-tight font-bold text-primary truncate">{lanyardData.activities[0].details || 'Playing'}</span>
+                  <span class="text-xs tracking-tight text-primary/80 font-medium truncate">{lanyardData.activities[0].state || ''}</span>
+                  <span class="text-xs tracking-tight text-primary/60 font-medium truncate">{lanyardData.activities[0].assets.large_text}</span>
                 </div>
               </div>
             </div>
           {:else}
-            <div class="flex-1 flex flex-col items-center justify-center opacity-30 text-center">
+            <div class="flex-1 flex flex-col items-center justify-center opacity-30 text-center py-2">
               <i class="fab fa-discord text-4xl mb-2"></i>
               <span class="text-xs font-semibold">No activity detected</span>
             </div>
@@ -366,7 +381,7 @@
     </div>
 
     <!-- Countdown -->
-    <div in:fly={{ y: 20, duration: 600, delay: 600 }} class="col-span-1 md:col-span-3 lg:col-span-7 glass-card rounded-lg p-7 flex flex-col md:flex-row items-center justify-between gap-4 hover:border-primary/30 transition-colors duration-300">
+    <div in:fly={{ y: 20, duration: 600, delay: 600 }} class="col-span-1 md:col-span-3 lg:col-span-7 glass-card rounded-lg p-7 flex flex-col md:flex-row items-center justify-between gap-4 hover:border-primary/30 transition-colors duration-300" on:mousemove={handleMouseMove}>
       <div class="flex items-center gap-4">
         <span class="text-primary tracking-tight font-bold text-2xl">Countdown</span>
         <span class="text-primary text-xl tracking-tight hidden md:inline">High school graduation exam</span>
@@ -391,7 +406,7 @@
         autoplay
         loop={isLooping}
       ></audio>
-      <div class="glass-card rounded-full p-3 flex items-center justify-between shadow-2xl border border-white/10">
+      <div class="glass-card rounded-full p-3 flex items-center justify-between shadow-2xl border border-white/10" on:mousemove={handleMouseMove}>
           <div class="flex items-center gap-3">
               <div class="relative w-[50px] h-[50px] group">
                   <!-- Circular Progress Bar -->

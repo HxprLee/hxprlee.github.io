@@ -13,10 +13,6 @@
     "file": "chunks/environment.js",
     "name": "environment"
   },
-  "_escape.js": {
-    "file": "chunks/escape.js",
-    "name": "escape"
-  },
   "_exports.js": {
     "file": "chunks/exports.js",
     "name": "exports"
@@ -68,8 +64,7 @@
       "_ssr.js",
       "_exports.js",
       "_utils.js",
-      "_ssr2.js",
-      "_escape.js"
+      "_ssr2.js"
     ]
   },
   "node_modules/@sveltejs/kit/src/runtime/server/index.js": {
@@ -95,8 +90,14 @@
       "_ssr.js"
     ],
     "css": [
-      "_app/immutable/assets/_layout.JC3dXpRQ.css"
+      "_app/immutable/assets/_layout.5igbQAWI.css"
     ]
+  },
+  "src/routes/+layout.ts": {
+    "file": "entries/pages/_layout.ts.js",
+    "name": "entries/pages/_layout.ts",
+    "src": "src/routes/+layout.ts",
+    "isEntry": true
   },
   "src/routes/+page.svelte": {
     "file": "entries/pages/_page.svelte.js",
@@ -104,8 +105,7 @@
     "src": "src/routes/+page.svelte",
     "isEntry": true,
     "imports": [
-      "_ssr.js",
-      "_escape.js"
+      "_ssr.js"
     ]
   }
 }

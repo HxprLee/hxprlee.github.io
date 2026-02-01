@@ -1,1 +1,26 @@
+# Dependencies
 node_modules
+.pnpm-debug.log
+
+# Build artifacts
+dist/
+build/
+.svelte-kit/
+.vercel_build_output/
+
+# Environment variables
+.env
+.env.*.local
+
+# OS and editor files
+.DS_Store
+.idea/
+.vscode/
+
+# Package managers
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# Test results (if applicable)
+test-results/

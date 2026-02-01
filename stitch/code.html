@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Glassmorphism Forest Profile</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet"/>
+<script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#E8E2B2", // Yellow-tinted text color from screenshot
+                        "background-light": "#1a1a1a", // Fallback
+                        "background-dark": "#0d0d0d", // Darker fallback
+                        "glass-dark": "rgba(18, 20, 24, 0.75)", // Dark glass color
+                        "glass-border": "rgba(255, 255, 255, 0.08)",
+                        "tag-bg": "rgba(255, 255, 255, 0.05)",
+                    },
+                    fontFamily: {
+                        display: ["JetBrains Mono", "monospace"],
+                    },
+                    borderRadius: {
+                        DEFAULT: "0.75rem", // 12px
+                    },
+                    backdropBlur: {
+                        xs: '2px',
+                    }
+                },
+            },
+        };
+    </script>
+<style>::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }.glass-card {
+            background: rgba(13, 15, 18, 0.65);backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display text-primary antialiased min-h-screen relative overflow-x-hidden selection:bg-primary selection:text-black">
+<div class="fixed inset-0 z-0">
+<img alt="Dark blurred forest background" class="w-full h-full object-cover filter brightness-[0.4] blur-[3px] scale-105" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB-c7q7T14rIirxD_6P94758MEPV1JwzV0_1R7PkBr0-UFobEgNH3qPcn2tN7BzjFqVxozulYjGHwcPaGS5AuSKdqegQM0ar-ypKJVMhiuY-IOtCDcLOx1XCpt5HiX3Pr95QCDaKtuG4OZnMDwMe5WK59gO6To18RO-_GzIF1BXBaSRA9uM8YYJX5yWEi-aC6gztLQ_pzF7Y9M3r37F4Pnw9hSGVixWa1Wvbp5OgJBzX4kr5v33wad2yLuFaQyTgl_IuogcaelqKaqQ"/>
+<div class="absolute inset-0 bg-gradient-to-b from-black/20 via-black/10 to-black/40"></div>
+</div>
+<main class="relative z-10 container mx-auto px-4 py-8 lg:py-16 flex flex-col items-center justify-center min-h-screen">
+<div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4 w-full max-w-6xl">
+<div class="col-span-1 md:col-span-2 glass-card rounded-xl p-6 flex flex-col justify-between hover:border-primary/30 transition-colors duration-300">
+<div class="flex items-start gap-5">
+<div class="w-20 h-20 rounded-full bg-gray-300 overflow-hidden flex-shrink-0 border-2 border-primary/20">
+<div class="w-full h-full bg-[#dcdcdc]"></div>
+</div>
+<div>
+<h1 class="text-2xl font-bold tracking-tight text-white mb-1">HxprLee</h1>
+<p class="text-xs text-primary/70 mb-2">Junior UI Designer | FOSS Enthusiast | Linux User</p>
+<div class="flex items-center gap-2 text-[10px] text-gray-400">
+<span>Last online: 2 days ago</span>
+<span class="w-2 h-2 rounded-full border border-gray-500"></span>
+</div>
+</div>
+</div>
+<div class="mt-6 text-sm leading-relaxed text-gray-300">
+                    I am fascinated by the evolution of technology and user interfaces, with an interest in flat and glassmorphism design.
+                </div>
+</div>
+<div class="col-span-1 md:col-span-2 glass-card rounded-xl p-6 flex flex-col hover:border-primary/30 transition-colors duration-300">
+<h2 class="text-lg font-bold text-white mb-2">Social Platforms</h2>
+<p class="text-xs text-gray-300 mb-6">
+                    You may find me on these social platforms, though I mostly active on <a class="underline decoration-1 underline-offset-2 hover:text-white transition-colors" href="#">Discord <i class="fas fa-external-link-alt text-[10px]"></i></a>
+</p>
+<div class="flex items-center gap-6 mt-auto">
+<a class="text-primary hover:text-white hover:scale-110 transition-all" href="#">
+<i class="fab fa-discord text-2xl"></i>
+</a>
+<a class="text-primary hover:text-white hover:scale-110 transition-all" href="#">
+<i class="fab fa-github text-2xl"></i>
+</a>
+<a class="text-primary hover:text-white hover:scale-110 transition-all" href="#">
+<i class="fab fa-youtube text-2xl"></i>
+</a>
+<a class="text-primary hover:text-white hover:scale-110 transition-all" href="#">
+<i class="fab fa-x-twitter text-2xl"></i>
+</a>
+</div>
+</div>
+<div class="col-span-1 glass-card rounded-xl p-6 flex flex-col justify-between hover:border-primary/30 transition-colors duration-300 min-h-[160px]">
+<div>
+<h3 class="text-primary text-base font-semibold mb-1">Local Time</h3>
+<div class="flex items-baseline gap-2">
+<span class="text-4xl font-bold text-white tracking-wider">21:36</span>
+<span class="text-xs text-gray-400">GMT+7</span>
+</div>
+</div>
+<div class="mt-4 flex items-center gap-2 text-xs text-gray-400">
+<i class="fas fa-map-marker-alt"></i>
+<span>Vietnam</span>
+</div>
+</div>
+<div class="col-span-1 md:col-span-2 glass-card rounded-xl p-6 flex flex-col gap-5 hover:border-primary/30 transition-colors duration-300">
+<div>
+<h3 class="text-primary font-bold mb-3 text-sm">What I've learned, so far...</h3>
+<div class="flex flex-wrap gap-2">
+<div class="bg-tag-bg border border-white/10 px-2 py-1 rounded text-xs flex items-center gap-2 text-gray-200">
+<i class="fab fa-figma"></i> Figma
+                        </div>
+<div class="bg-tag-bg border border-white/10 px-2 py-1 rounded text-xs flex items-center gap-2 text-gray-200">
+<i class="fab fa-css3"></i> CSS
+                        </div>
+<div class="bg-tag-bg border border-white/10 px-2 py-1 rounded text-xs flex items-center gap-2 text-gray-200">
+<i class="fab fa-html5"></i> HTML
+                        </div>
+</div>
+</div>
+<div>
+<h3 class="text-primary text-xs mb-2 opacity-80">Current objective</h3>
+<div class="flex flex-wrap gap-2">
+<div class="bg-tag-bg border border-white/10 px-2 py-1 rounded text-xs flex items-center gap-2 text-gray-200">
+<i class="fas fa-film"></i> Davinci Resolve
+                        </div>
+<div class="bg-tag-bg border border-white/10 px-2 py-1 rounded text-xs flex items-center gap-2 text-gray-200">
+<i class="fab fa-python"></i> Python
+                        </div>
+<div class="bg-tag-bg border border-white/10 px-2 py-1 rounded text-xs flex items-center gap-2 text-gray-200">
+<i class="fas fa-paper-plane"></i> Dart/Flutter
+                        </div>
+</div>
+</div>
+</div>
+<div class="col-span-1 md:row-span-2 glass-card rounded-xl p-6 flex items-center justify-center text-center hover:border-primary/30 transition-colors duration-300 min-h-[200px]">
+<div class="text-primary/90 text-sm">
+                    Embed discord<br/>profile here
+                </div>
+</div>
+<div class="col-span-1 md:col-span-3 glass-card rounded-xl p-4 flex flex-col md:flex-row items-center justify-between gap-4 hover:border-primary/30 transition-colors duration-300">
+<div class="flex items-center gap-4">
+<span class="text-white font-bold text-lg">Countdown</span>
+<span class="text-gray-300 text-sm hidden md:inline">High school graduation exam</span>
+<span class="text-gray-300 text-sm md:hidden">Graduation exam</span>
+</div>
+<div class="font-mono text-xl text-primary font-semibold tracking-widest">
+                    130<span class="text-xs align-top mr-1">D</span>|<span class="mx-1"></span>8<span class="text-xs align-top mr-1">H</span>|<span class="mx-1"></span>50<span class="text-xs align-top mr-1">M</span>|<span class="mx-1"></span>20<span class="text-xs align-top">S</span>
+</div>
+</div>
+</div>
+<div class="mt-12 w-full max-w-md">
+<div class="glass-card rounded-full px-4 py-2 flex items-center justify-between shadow-2xl border border-white/10">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full overflow-hidden border border-white/20 animate-[spin_8s_linear_infinite]">
+<img alt="Album Art" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBaBwZM80D3nor84IRBavlHTrkfcS0N7u7x2OnvgQfYDhhlZ1_NDfnKPbWE5FKc0Tzz30FLYZdTmaT1XVmL4z2BHazzDRAGFzoWviXm1-0sST56GJshJqUz2mQnIPkFw2bunrrdUbQf5Qn1e9YQhY8V_NylqSdE0iDsSuEGNc3FHf9Ce_kNTi4mIvLyrth_HjNaqxcL8Ygf93qxPKFpDuqZZPUznkKA9O3jGW4W9n_LqcJhu1IITrvFcU3TfXtWMzAA4Ghdtb-9hjgg"/>
+</div>
+<div class="flex flex-col">
+<span class="text-sm font-bold text-white">Zako</span>
+<span class="text-[10px] text-gray-400">Hiiragi Magnetite</span>
+</div>
+</div>
+<div class="flex items-center gap-4 pr-2">
+<button class="text-gray-400 hover:text-primary transition-colors">
+<i class="fas fa-ellipsis-v"></i>
+</button>
+<button class="text-gray-400 hover:text-primary transition-colors">
+<i class="fas fa-sync-alt"></i>
+</button>
+<button class="text-gray-400 hover:text-primary transition-colors">
+<i class="fas fa-volume-up"></i>
+</button>
+</div>
+</div>
+<div class="w-2/3 mx-auto h-[1px] bg-gradient-to-r from-transparent via-primary/30 to-transparent -mt-16 mb-16 pointer-events-none"></div>
+</div>
+</main>
+
+</body></html>

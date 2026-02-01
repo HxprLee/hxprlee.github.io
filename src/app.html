@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<link rel="icon" href="/imgs/pfp-icon.png" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<title>Profile: HxprLee</title>
+		
+		<!-- Tailwind CSS CDN -->
+		<script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
+		<script src="https://kit.fontawesome.com/6418ffb7f1.js" crossorigin="anonymous"></script>
+		
+		<!-- Fonts -->
+		<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&display=swap" rel="stylesheet"/>
+		<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet"/>
+		
+		<!-- Tailwind Configuration Script -->
+		<script>
+			tailwind.config = {
+				darkMode: "class",
+				theme: {
+					extend: {
+						colors: {
+							primary: "#FFEFAF",
+							"background-light": "#1a1a1a",
+							"background-dark": "#11171C",
+							"glass-dark": "rgba(18, 20, 24, 0.75)",
+							"glass-border": "rgba(255, 255, 255, 0.08)",
+							"tag-bg": "#191F24",
+						},
+						fontFamily: {
+							display: ["Iosevka NF", "monospace"],
+						},
+						borderRadius: {
+							DEFAULT: "8px",
+						},
+						backdropBlur: {
+							xs: '8px',
+						}
+					},
+				},
+			};
+		</script>
+		
+		%sveltekit.head%
+	</head>
+	<body data-sveltekit-preload-data="hover" class="bg-background-light dark:bg-background-dark font-display text-primary antialiased min-h-screen relative overflow-x-hidden selection:bg-primary selection:text-black">
+		<div style="display: contents">%sveltekit.body%</div>
+	</body>
+</html>

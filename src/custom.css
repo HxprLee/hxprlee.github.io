@@ -20,8 +20,8 @@
 .glass-card {
     position: relative;
     background: rgba(17, 23, 28, 0.6);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
     border: 1px solid rgba(255, 239, 175, 0.1);
     box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
     overflow: hidden;

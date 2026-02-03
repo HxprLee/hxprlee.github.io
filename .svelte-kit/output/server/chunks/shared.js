@@ -1,7 +1,12 @@
+import { json, text } from "@sveltejs/kit";
+import { SvelteKitError, HttpError } from "@sveltejs/kit/internal";
+import { with_request_store } from "@sveltejs/kit/internal/server";
 import * as devalue from "devalue";
 import { t as text_decoder, b as base64_encode, c as base64_decode } from "./utils.js";
-import { SvelteKitError } from "@sveltejs/kit/internal";
 const BROWSER = false;
+const SVELTE_KIT_ASSETS = "/_svelte_kit_assets";
+const ENDPOINT_METHODS = ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS", "HEAD"];
+const PAGE_METHODS = ["GET", "POST", "HEAD"];
 function set_nested_value(object, path_string, value) {
   if (path_string.startsWith("n:")) {
     path_string = path_string.slice(2);
@@ -502,6 +507,211 @@ function build_path_string(path) {
   }
   return result;
 }
+function negotiate(accept, types) {
+  const parts = [];
+  accept.split(",").forEach((str, i) => {
+    const match = /([^/ \t]+)\/([^; \t]+)[ \t]*(?:;[ \t]*q=([0-9.]+))?/.exec(str);
+    if (match) {
+      const [, type, subtype, q = "1"] = match;
+      parts.push({ type, subtype, q: +q, i });
+    }
+  });
+  parts.sort((a, b) => {
+    if (a.q !== b.q) {
+      return b.q - a.q;
+    }
+    if (a.subtype === "*" !== (b.subtype === "*")) {
+      return a.subtype === "*" ? 1 : -1;
+    }
+    if (a.type === "*" !== (b.type === "*")) {
+      return a.type === "*" ? 1 : -1;
+    }
+    return a.i - b.i;
+  });
+  let accepted;
+  let min_priority = Infinity;
+  for (const mimetype of types) {
+    const [type, subtype] = mimetype.split("/");
+    const priority = parts.findIndex(
+      (part) => (part.type === type || part.type === "*") && (part.subtype === subtype || part.subtype === "*")
+    );
+    if (priority !== -1 && priority < min_priority) {
+      accepted = mimetype;
+      min_priority = priority;
+    }
+  }
+  return accepted;
+}
+function is_content_type(request, ...types) {
+  const type = request.headers.get("content-type")?.split(";", 1)[0].trim() ?? "";
+  return types.includes(type.toLowerCase());
+}
+function is_form_content_type(request) {
+  return is_content_type(
+    request,
+    "application/x-www-form-urlencoded",
+    "multipart/form-data",
+    "text/plain",
+    BINARY_FORM_CONTENT_TYPE
+  );
+}
+function coalesce_to_error(err) {
+  return err instanceof Error || err && /** @type {any} */
+  err.name && /** @type {any} */
+  err.message ? (
+    /** @type {Error} */
+    err
+  ) : new Error(JSON.stringify(err));
+}
+function normalize_error(error) {
+  return (
+    /** @type {import('../exports/internal/index.js').Redirect | HttpError | SvelteKitError | Error} */
+    error
+  );
+}
+function get_status(error) {
+  return error instanceof HttpError || error instanceof SvelteKitError ? error.status : 500;
+}
+function get_message(error) {
+  return error instanceof SvelteKitError ? error.text : "Internal Error";
+}
+const escape_html_attr_dict = {
+  "&": "&amp;",
+  '"': "&quot;"
+  // Svelte also escapes < because the escape function could be called inside a `noscript` there
+  // https://github.com/sveltejs/svelte/security/advisories/GHSA-8266-84wp-wv5c
+  // However, that doesn't apply in SvelteKit
+};
+const escape_html_dict = {
+  "&": "&amp;",
+  "<": "&lt;"
+};
+const surrogates = (
+  // high surrogate without paired low surrogate
+  "[\\ud800-\\udbff](?![\\udc00-\\udfff])|[\\ud800-\\udbff][\\udc00-\\udfff]|[\\udc00-\\udfff]"
+);
+const escape_html_attr_regex = new RegExp(
+  `[${Object.keys(escape_html_attr_dict).join("")}]|` + surrogates,
+  "g"
+);
+const escape_html_regex = new RegExp(
+  `[${Object.keys(escape_html_dict).join("")}]|` + surrogates,
+  "g"
+);
+function escape_html(str, is_attr) {
+  const dict = is_attr ? escape_html_attr_dict : escape_html_dict;
+  const escaped_str = str.replace(is_attr ? escape_html_attr_regex : escape_html_regex, (match) => {
+    if (match.length === 2) {
+      return match;
+    }
+    return dict[match] ?? `&#${match.charCodeAt(0)};`;
+  });
+  return escaped_str;
+}
+function method_not_allowed(mod, method) {
+  return text(`${method} method not allowed`, {
+    status: 405,
+    headers: {
+      // https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/405
+      // "The server must generate an Allow header field in a 405 status code response"
+      allow: allowed_methods(mod).join(", ")
+    }
+  });
+}
+function allowed_methods(mod) {
+  const allowed = ENDPOINT_METHODS.filter((method) => method in mod);
+  if ("GET" in mod && !("HEAD" in mod)) {
+    allowed.push("HEAD");
+  }
+  return allowed;
+}
+function get_global_name(options) {
+  return `__sveltekit_${options.version_hash}`;
+}
+function static_error_page(options, status, message) {
+  let page = options.templates.error({ status, message: escape_html(message) });
+  return text(page, {
+    headers: { "content-type": "text/html; charset=utf-8" },
+    status
+  });
+}
+async function handle_fatal_error(event, state, options, error) {
+  error = error instanceof HttpError ? error : coalesce_to_error(error);
+  const status = get_status(error);
+  const body = await handle_error_and_jsonify(event, state, options, error);
+  const type = negotiate(event.request.headers.get("accept") || "text/html", [
+    "application/json",
+    "text/html"
+  ]);
+  if (event.isDataRequest || type === "application/json") {
+    return json(body, {
+      status
+    });
+  }
+  return static_error_page(options, status, body.message);
+}
+async function handle_error_and_jsonify(event, state, options, error) {
+  if (error instanceof HttpError) {
+    return { message: "Unknown Error", ...error.body };
+  }
+  const status = get_status(error);
+  const message = get_message(error);
+  return await with_request_store(
+    { event, state },
+    () => options.hooks.handleError({ error, event, status, message })
+  ) ?? { message };
+}
+function redirect_response(status, location) {
+  const response = new Response(void 0, {
+    status,
+    headers: { location }
+  });
+  return response;
+}
+function clarify_devalue_error(event, error) {
+  if (error.path) {
+    return `Data returned from \`load\` while rendering ${event.route.id} is not serializable: ${error.message} (${error.path}). If you need to serialize/deserialize custom types, use transport hooks: https://svelte.dev/docs/kit/hooks#Universal-hooks-transport.`;
+  }
+  if (error.path === "") {
+    return `Data returned from \`load\` while rendering ${event.route.id} is not a plain object`;
+  }
+  return error.message;
+}
+function serialize_uses(node) {
+  const uses = {};
+  if (node.uses && node.uses.dependencies.size > 0) {
+    uses.dependencies = Array.from(node.uses.dependencies);
+  }
+  if (node.uses && node.uses.search_params.size > 0) {
+    uses.search_params = Array.from(node.uses.search_params);
+  }
+  if (node.uses && node.uses.params.size > 0) {
+    uses.params = Array.from(node.uses.params);
+  }
+  if (node.uses?.parent) uses.parent = 1;
+  if (node.uses?.route) uses.route = 1;
+  if (node.uses?.url) uses.url = 1;
+  return uses;
+}
+function has_prerendered_path(manifest, pathname) {
+  return manifest._.prerendered_routes.has(pathname) || pathname.at(-1) === "/" && manifest._.prerendered_routes.has(pathname.slice(0, -1));
+}
+function format_server_error(status, error, event) {
+  const formatted_text = `
+\x1B[1;31m[${status}] ${event.request.method} ${event.url.pathname}\x1B[0m`;
+  if (status === 404) {
+    return formatted_text;
+  }
+  return `${formatted_text}
+${error.stack}`;
+}
+function get_node_type(node_id) {
+  const parts = node_id?.split("/");
+  const filename = parts?.at(-1);
+  if (!filename) return "unknown";
+  const dot_parts = filename.split(".");
+  return dot_parts.slice(0, -1).join(".");
+}
 const INVALIDATED_PARAM = "x-sveltekit-invalidated";
 const TRAILING_SLASH_PARAM = "x-sveltekit-trailing-slash";
 function stringify(data, transport) {
@@ -527,18 +737,36 @@ function create_remote_key(id, payload) {
   return id + "/" + payload;
 }
 export {
-  BINARY_FORM_CONTENT_TYPE as B,
+  BROWSER as B,
+  ENDPOINT_METHODS as E,
   INVALIDATED_PARAM as I,
+  PAGE_METHODS as P,
+  SVELTE_KIT_ASSETS as S,
   TRAILING_SLASH_PARAM as T,
-  BROWSER as a,
-  stringify_remote_arg as b,
-  create_remote_key as c,
-  deserialize_binary_form as d,
-  create_field_proxy as e,
-  flatten_issues as f,
-  set_nested_value as g,
-  deep_set as h,
-  normalize_issue as n,
+  normalize_error as a,
+  get_global_name as b,
+  clarify_devalue_error as c,
+  get_node_type as d,
+  escape_html as e,
+  create_remote_key as f,
+  get_status as g,
+  handle_error_and_jsonify as h,
+  is_form_content_type as i,
+  static_error_page as j,
+  stringify as k,
+  deserialize_binary_form as l,
+  method_not_allowed as m,
+  negotiate as n,
+  has_prerendered_path as o,
   parse_remote_arg as p,
-  stringify as s
+  handle_fatal_error as q,
+  redirect_response as r,
+  serialize_uses as s,
+  format_server_error as t,
+  stringify_remote_arg as u,
+  flatten_issues as v,
+  create_field_proxy as w,
+  normalize_issue as x,
+  set_nested_value as y,
+  deep_set as z
 };

@@ -224,12 +224,15 @@
   style="transform: translate({parallaxX * -15}px, {parallaxY *
     -15}px) scale(1.1)"
 >
-  <img
+  <video muted autoplay loop class="w-screen h-screen object-cover relative filter brightness-[0.7] blur-[4px]">
+    <source src="/bgs/selena_pianissimo_scene.mp4">
+  </video>
+  <!-- <img
     alt="Background"
     class="w-[100%] h-[100%] absolute filter brightness-[0.7] blur-[4px]"
     src="https://w.wallhaven.cc/full/ly/wallhaven-ly8okr.png"
   />
-  <div class="absolute inset-0"></div>
+  <div class="absolute inset-0"></div> -->
 </div>
 
 <!-- Grid Tilting: Increase perspective (e.g., 2000px) for subtle tilt, decrease (e.g., 800px) for stronger tilt -->
@@ -261,7 +264,7 @@
               <img
                 alt="HxprLee's profile"
                 class="w-full h-full bg-[#dcdcdc]"
-                src="/imgs/pfp-icon.png"
+                src="/imgs/pfp-icon.webp"
               />
             </div>
             <div>
@@ -468,7 +471,7 @@
               <img
                 class="w-full h-[92px] object-cover"
                 alt="Background"
-                src="/imgs/banner.png"
+                src="/imgs/banner.webp"
               />
               <div class="absolute ml-5 mt-8">
                 <img
@@ -685,7 +688,7 @@
                   style="animation-play-state: {isPlaying
                     ? 'running'
                     : 'paused'}"
-                  src="/imgs/artwork.png"
+                  src="/imgs/artwork.webp"
                 />
 
                 <!-- Play/Pause Overlay -->

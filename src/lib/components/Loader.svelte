@@ -87,8 +87,8 @@
     <!-- Crossing Lines -->
     {#if showLines}
         <div class="absolute inset-0 pointer-events-none">
-            <div class="line line-1" style="--offset: -1px;"></div>
-            <div class="line line-2" style="--offset: 64px;"></div>
+            <div class="line line-1" style="--offset: -4px;"></div>
+            <div class="line line-2" style="--offset: 69px;"></div>
         </div>
     {/if}
 </div>
@@ -97,7 +97,7 @@
     .line {
         position: absolute;
         background-color: #fee086;
-        height: 2.5px;
+        height: 2.4px;
         width: 150vw; /* Wide enough to cover diagonals */
         top: 50%;
         left: 50%;

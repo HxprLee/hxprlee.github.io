@@ -1,16 +1,11 @@
-name: Deploy to GitHub Pages
+name: Deploy to Nekoweb
 
 on:
   push:
-    branches: 'main' # Replace with your default branch name
-
-permissions:
-  contents: read
-  pages: write
-  id-token: write
+    branches: 'main'
 
 jobs:
-  build_site:
+  deploy:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -25,25 +20,7 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: Build
+      - name: Build and Deploy
         run: npm run build
-
-      - name: Verify Build
-        run: ls -R build/
-
-      - name: Upload Artifacts
-        uses: actions/upload-pages-artifact@v3
-        with:
-          # this should match the `pages` option in your adapter-static config
-          path: 'build/'
-
-  deploy:
-    needs: build_site
-    runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    steps:
-      - name: Deploy
-        id: deployment
-        uses: actions/deploy-pages@v4
+        env:
+          NEKOWEB_API: ${{ secrets.NEKOWEB_API }}

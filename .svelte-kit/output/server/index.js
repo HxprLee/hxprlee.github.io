@@ -1,6 +1,6 @@
-import { B as BINARY_FORM_CONTENT_TYPE, a as BROWSER, c as create_remote_key, p as parse_remote_arg, s as stringify, d as deserialize_binary_form, T as TRAILING_SLASH_PARAM, I as INVALIDATED_PARAM } from "./chunks/shared.js";
+import { E as ENDPOINT_METHODS, P as PAGE_METHODS, n as negotiate, m as method_not_allowed, h as handle_error_and_jsonify, B as BROWSER, g as get_status, i as is_form_content_type, a as normalize_error, b as get_global_name, s as serialize_uses, c as clarify_devalue_error, d as get_node_type, e as escape_html, S as SVELTE_KIT_ASSETS, f as create_remote_key, j as static_error_page, r as redirect_response, p as parse_remote_arg, k as stringify, l as deserialize_binary_form, o as has_prerendered_path, T as TRAILING_SLASH_PARAM, I as INVALIDATED_PARAM, q as handle_fatal_error, t as format_server_error } from "./chunks/shared.js";
 import { json, text, error } from "@sveltejs/kit";
-import { HttpError, SvelteKitError, Redirect, ActionFailure } from "@sveltejs/kit/internal";
+import { Redirect, SvelteKitError, ActionFailure, HttpError } from "@sveltejs/kit/internal";
 import { with_request_store, merge_tracing, try_get_request_store } from "@sveltejs/kit/internal/server";
 import { a as assets, b as base, c as app_dir, r as relative, o as override, d as reset } from "./chunks/environment.js";
 import * as devalue from "devalue";
@@ -21,214 +21,6 @@ function with_resolvers() {
 }
 const NULL_BODY_STATUS = [101, 103, 204, 205, 304];
 const IN_WEBCONTAINER = !!globalThis.process?.versions?.webcontainer;
-const SVELTE_KIT_ASSETS = "/_svelte_kit_assets";
-const ENDPOINT_METHODS = ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS", "HEAD"];
-const PAGE_METHODS = ["GET", "POST", "HEAD"];
-function negotiate(accept, types) {
-  const parts = [];
-  accept.split(",").forEach((str, i) => {
-    const match = /([^/ \t]+)\/([^; \t]+)[ \t]*(?:;[ \t]*q=([0-9.]+))?/.exec(str);
-    if (match) {
-      const [, type, subtype, q = "1"] = match;
-      parts.push({ type, subtype, q: +q, i });
-    }
-  });
-  parts.sort((a, b) => {
-    if (a.q !== b.q) {
-      return b.q - a.q;
-    }
-    if (a.subtype === "*" !== (b.subtype === "*")) {
-      return a.subtype === "*" ? 1 : -1;
-    }
-    if (a.type === "*" !== (b.type === "*")) {
-      return a.type === "*" ? 1 : -1;
-    }
-    return a.i - b.i;
-  });
-  let accepted;
-  let min_priority = Infinity;
-  for (const mimetype of types) {
-    const [type, subtype] = mimetype.split("/");
-    const priority = parts.findIndex(
-      (part) => (part.type === type || part.type === "*") && (part.subtype === subtype || part.subtype === "*")
-    );
-    if (priority !== -1 && priority < min_priority) {
-      accepted = mimetype;
-      min_priority = priority;
-    }
-  }
-  return accepted;
-}
-function is_content_type(request, ...types) {
-  const type = request.headers.get("content-type")?.split(";", 1)[0].trim() ?? "";
-  return types.includes(type.toLowerCase());
-}
-function is_form_content_type(request) {
-  return is_content_type(
-    request,
-    "application/x-www-form-urlencoded",
-    "multipart/form-data",
-    "text/plain",
-    BINARY_FORM_CONTENT_TYPE
-  );
-}
-function coalesce_to_error(err) {
-  return err instanceof Error || err && /** @type {any} */
-  err.name && /** @type {any} */
-  err.message ? (
-    /** @type {Error} */
-    err
-  ) : new Error(JSON.stringify(err));
-}
-function normalize_error(error2) {
-  return (
-    /** @type {import('../exports/internal/index.js').Redirect | HttpError | SvelteKitError | Error} */
-    error2
-  );
-}
-function get_status(error2) {
-  return error2 instanceof HttpError || error2 instanceof SvelteKitError ? error2.status : 500;
-}
-function get_message(error2) {
-  return error2 instanceof SvelteKitError ? error2.text : "Internal Error";
-}
-const escape_html_attr_dict = {
-  "&": "&amp;",
-  '"': "&quot;"
-  // Svelte also escapes < because the escape function could be called inside a `noscript` there
-  // https://github.com/sveltejs/svelte/security/advisories/GHSA-8266-84wp-wv5c
-  // However, that doesn't apply in SvelteKit
-};
-const escape_html_dict = {
-  "&": "&amp;",
-  "<": "&lt;"
-};
-const surrogates = (
-  // high surrogate without paired low surrogate
-  "[\\ud800-\\udbff](?![\\udc00-\\udfff])|[\\ud800-\\udbff][\\udc00-\\udfff]|[\\udc00-\\udfff]"
-);
-const escape_html_attr_regex = new RegExp(
-  `[${Object.keys(escape_html_attr_dict).join("")}]|` + surrogates,
-  "g"
-);
-const escape_html_regex = new RegExp(
-  `[${Object.keys(escape_html_dict).join("")}]|` + surrogates,
-  "g"
-);
-function escape_html(str, is_attr) {
-  const dict = is_attr ? escape_html_attr_dict : escape_html_dict;
-  const escaped_str = str.replace(is_attr ? escape_html_attr_regex : escape_html_regex, (match) => {
-    if (match.length === 2) {
-      return match;
-    }
-    return dict[match] ?? `&#${match.charCodeAt(0)};`;
-  });
-  return escaped_str;
-}
-function method_not_allowed(mod, method) {
-  return text(`${method} method not allowed`, {
-    status: 405,
-    headers: {
-      // https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/405
-      // "The server must generate an Allow header field in a 405 status code response"
-      allow: allowed_methods(mod).join(", ")
-    }
-  });
-}
-function allowed_methods(mod) {
-  const allowed = ENDPOINT_METHODS.filter((method) => method in mod);
-  if ("GET" in mod && !("HEAD" in mod)) {
-    allowed.push("HEAD");
-  }
-  return allowed;
-}
-function get_global_name(options2) {
-  return `__sveltekit_${options2.version_hash}`;
-}
-function static_error_page(options2, status, message) {
-  let page = options2.templates.error({ status, message: escape_html(message) });
-  return text(page, {
-    headers: { "content-type": "text/html; charset=utf-8" },
-    status
-  });
-}
-async function handle_fatal_error(event, state, options2, error2) {
-  error2 = error2 instanceof HttpError ? error2 : coalesce_to_error(error2);
-  const status = get_status(error2);
-  const body2 = await handle_error_and_jsonify(event, state, options2, error2);
-  const type = negotiate(event.request.headers.get("accept") || "text/html", [
-    "application/json",
-    "text/html"
-  ]);
-  if (event.isDataRequest || type === "application/json") {
-    return json(body2, {
-      status
-    });
-  }
-  return static_error_page(options2, status, body2.message);
-}
-async function handle_error_and_jsonify(event, state, options2, error2) {
-  if (error2 instanceof HttpError) {
-    return { message: "Unknown Error", ...error2.body };
-  }
-  const status = get_status(error2);
-  const message = get_message(error2);
-  return await with_request_store(
-    { event, state },
-    () => options2.hooks.handleError({ error: error2, event, status, message })
-  ) ?? { message };
-}
-function redirect_response(status, location) {
-  const response = new Response(void 0, {
-    status,
-    headers: { location }
-  });
-  return response;
-}
-function clarify_devalue_error(event, error2) {
-  if (error2.path) {
-    return `Data returned from \`load\` while rendering ${event.route.id} is not serializable: ${error2.message} (${error2.path}). If you need to serialize/deserialize custom types, use transport hooks: https://svelte.dev/docs/kit/hooks#Universal-hooks-transport.`;
-  }
-  if (error2.path === "") {
-    return `Data returned from \`load\` while rendering ${event.route.id} is not a plain object`;
-  }
-  return error2.message;
-}
-function serialize_uses(node) {
-  const uses = {};
-  if (node.uses && node.uses.dependencies.size > 0) {
-    uses.dependencies = Array.from(node.uses.dependencies);
-  }
-  if (node.uses && node.uses.search_params.size > 0) {
-    uses.search_params = Array.from(node.uses.search_params);
-  }
-  if (node.uses && node.uses.params.size > 0) {
-    uses.params = Array.from(node.uses.params);
-  }
-  if (node.uses?.parent) uses.parent = 1;
-  if (node.uses?.route) uses.route = 1;
-  if (node.uses?.url) uses.url = 1;
-  return uses;
-}
-function has_prerendered_path(manifest, pathname) {
-  return manifest._.prerendered_routes.has(pathname) || pathname.at(-1) === "/" && manifest._.prerendered_routes.has(pathname.slice(0, -1));
-}
-function format_server_error(status, error2, event) {
-  const formatted_text = `
-\x1B[1;31m[${status}] ${event.request.method} ${event.url.pathname}\x1B[0m`;
-  if (status === 404) {
-    return formatted_text;
-  }
-  return `${formatted_text}
-${error2.stack}`;
-}
-function get_node_type(node_id) {
-  const parts = node_id?.split("/");
-  const filename = parts?.at(-1);
-  if (!filename) return "unknown";
-  const dot_parts = filename.split(".");
-  return dot_parts.slice(0, -1).join(".");
-}
 async function render_endpoint(event, event_state, mod, state) {
   const method = (
     /** @type {import('types').HttpMethod} */
@@ -1435,12 +1227,13 @@ class BaseProvider {
     const effective_style_src = d["style-src"] || d["default-src"];
     const style_src_attr = d["style-src-attr"];
     const style_src_elem = d["style-src-elem"];
-    const needs_csp = (directive) => !!directive && !directive.some((value) => value === "unsafe-inline");
-    this.#script_src_needs_csp = needs_csp(effective_script_src);
-    this.#script_src_elem_needs_csp = needs_csp(script_src_elem);
-    this.#style_src_needs_csp = needs_csp(effective_style_src);
-    this.#style_src_attr_needs_csp = needs_csp(style_src_attr);
-    this.#style_src_elem_needs_csp = needs_csp(style_src_elem);
+    const style_needs_csp = (directive) => !!directive && !directive.some((value) => value === "unsafe-inline");
+    const script_needs_csp = (directive) => !!directive && (!directive.some((value) => value === "unsafe-inline") || directive.some((value) => value === "strict-dynamic"));
+    this.#script_src_needs_csp = script_needs_csp(effective_script_src);
+    this.#script_src_elem_needs_csp = script_needs_csp(script_src_elem);
+    this.#style_src_needs_csp = style_needs_csp(effective_style_src);
+    this.#style_src_attr_needs_csp = style_needs_csp(style_src_attr);
+    this.#style_src_elem_needs_csp = style_needs_csp(style_src_elem);
     this.#script_needs_csp = this.#script_src_needs_csp || this.#script_src_elem_needs_csp;
     this.#style_needs_csp = this.#style_src_needs_csp || this.#style_src_attr_needs_csp || this.#style_src_elem_needs_csp;
     this.script_needs_nonce = this.#script_needs_csp && !this.#use_hashes;
@@ -1613,8 +1406,11 @@ function exec(match, params, matchers) {
       buffered = 0;
     }
     if (value === void 0) {
-      if (param.rest) result[param.name] = "";
-      continue;
+      if (param.rest) {
+        value = "";
+      } else {
+        continue;
+      }
     }
     if (!param.matcher || matchers[param.matcher](value)) {
       result[param.name] = value;
@@ -1833,7 +1629,13 @@ async function render_response({
       for (const url of node.stylesheets) stylesheets.add(url);
       for (const url of node.fonts) fonts.add(url);
       if (node.inline_styles && !client.inline) {
-        Object.entries(await node.inline_styles()).forEach(([k, v]) => inline_styles.set(k, v));
+        Object.entries(await node.inline_styles()).forEach(([filename, css]) => {
+          if (typeof css === "string") {
+            inline_styles.set(filename, css);
+            return;
+          }
+          inline_styles.set(filename, css(`${assets$1}/${app_dir}/immutable/assets`, assets$1));
+        });
       }
     }
   } else {
@@ -2352,21 +2154,10 @@ async function handle_remote_call_internal(event, state, options2, manifest, id)
         );
       }
       const { payloads } = await event.request.json();
-      const args = payloads.map((payload2) => parse_remote_arg(payload2, transport));
-      const get_result = await with_request_store({ event, state }, () => info.run(args));
-      const results = await Promise.all(
-        args.map(async (arg, i) => {
-          try {
-            return { type: "result", data: get_result(arg, i) };
-          } catch (error2) {
-            return {
-              type: "error",
-              error: await handle_error_and_jsonify(event, state, options2, error2),
-              status: error2 instanceof HttpError || error2 instanceof SvelteKitError ? error2.status : 500
-            };
-          }
-        })
+      const args = await Promise.all(
+        payloads.map((payload2) => parse_remote_arg(payload2, transport))
       );
+      const results = await with_request_store({ event, state }, () => info.run(args, options2));
       return json(
         /** @type {RemoteFunctionResponse} */
         {
@@ -3343,7 +3134,7 @@ async function internal_respond(request, options2, manifest, state) {
     fetch: null,
     getClientAddress: state.getClientAddress || (() => {
       throw new Error(
-        `${"@sveltejs/adapter-static"} does not specify getClientAddress. Please raise an issue`
+        `${"adapter-nekoweb"} does not specify getClientAddress. Please raise an issue`
       );
     }),
     locals: {},
@@ -3692,20 +3483,20 @@ async function internal_respond(request, options2, manifest, state) {
               resolve_opts
             );
           } else {
-            const allowed_methods2 = new Set(allowed_page_methods);
+            const allowed_methods = new Set(allowed_page_methods);
             const node = await manifest._.nodes[route.page.leaf]();
             if (node?.server?.actions) {
-              allowed_methods2.add("POST");
+              allowed_methods.add("POST");
             }
             if (method === "OPTIONS") {
               response2 = new Response(null, {
                 status: 204,
                 headers: {
-                  allow: Array.from(allowed_methods2.values()).join(", ")
+                  allow: Array.from(allowed_methods.values()).join(", ")
                 }
               });
             } else {
-              const mod = [...allowed_methods2].reduce(
+              const mod = [...allowed_methods].reduce(
                 (acc, curr) => {
                   acc[curr] = true;
                   return acc;

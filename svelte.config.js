@@ -1,5 +1,7 @@
-import adapter from '@sveltejs/adapter-static';
+import adapter from 'svelte-adapter-nekoweb';
 import { vitePreprocess } from '@sveltejs/vite-plugin-svelte';
+
+const nwApiKey = process.env.NEKOWEB_API;
 
 /** @type {import('@sveltejs/kit').Config} */
 const config = {
@@ -8,11 +10,16 @@ const config = {
 	preprocess: vitePreprocess(),
 
 	kit: {
-		// adapter-auto only supports some environments, see https://kit.svelte.dev/docs/adapter-auto for a list.
-		// If your environment is not supported or you settled on a specific environment, switch out the adapter.
-		// See https://kit.svelte.dev/docs/adapters for more information about adapters.
 		adapter: adapter({
-			fallback: '404.html'
+			apiKey: nwApiKey,
+			// cookie: 'nekoweb cookie here (optional, but recommended)',
+			// folder: 'build',
+			// Default adapter-static options are below
+			pages: 'build',
+			assets: 'build',
+			fallback: undefined,
+			precompress: false,
+			strict: true
 		})
 	}
 };

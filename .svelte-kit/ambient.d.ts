@@ -57,7 +57,6 @@ declare module '$env/static/private' {
 	export const XDG_SESSION_TYPE: string;
 	export const npm_config_init_module: string;
 	export const SYSTEMD_EXEC_PID: string;
-	export const _: string;
 	export const OMF_PATH: string;
 	export const VSCODE_GIT_ASKPASS_NODE: string;
 	export const TERMINAL: string;
@@ -65,8 +64,8 @@ declare module '$env/static/private' {
 	export const MOTD_SHOWN: string;
 	export const VSCODE_INJECTION: string;
 	export const HOME: string;
-	export const LANG: string;
 	export const LC_PAPER: string;
+	export const LANG: string;
 	export const XDG_CURRENT_DESKTOP: string;
 	export const npm_package_version: string;
 	export const MEMORY_PRESSURE_WATCH: string;
@@ -84,19 +83,17 @@ declare module '$env/static/private' {
 	export const npm_config_npm_version: string;
 	export const XDG_SESSION_CLASS: string;
 	export const GEMINI_CLI_IDE_WORKSPACE_PATH: string;
-	export const TERM: string;
 	export const LC_IDENTIFICATION: string;
+	export const TERM: string;
 	export const npm_package_name: string;
 	export const npm_config_prefix: string;
 	export const USER: string;
-	export const GIT_PAGER: string;
-	export const CUDA_PATH: string;
 	export const VSCODE_GIT_IPC_HANDLE: string;
+	export const CUDA_PATH: string;
 	export const HYPRLAND_INSTANCE_SIGNATURE: string;
 	export const DISPLAY: string;
 	export const npm_lifecycle_event: string;
 	export const SHLVL: string;
-	export const PAGER: string;
 	export const LC_TELEPHONE: string;
 	export const LC_MEASUREMENT: string;
 	export const MANAGERPIDFDID: string;
@@ -105,12 +102,10 @@ declare module '$env/static/private' {
 	export const npm_execpath: string;
 	export const FC_FONTATIONS: string;
 	export const XDG_RUNTIME_DIR: string;
-	export const GEMINI_CLI: string;
 	export const NVCC_CCBIN: string;
 	export const DEBUGINFOD_URLS: string;
 	export const npm_package_json: string;
 	export const LC_TIME: string;
-	export const GEMINI_CLI_NO_RELAUNCH: string;
 	export const VSCODE_GIT_ASKPASS_MAIN: string;
 	export const JOURNAL_STREAM: string;
 	export const XDG_DATA_DIRS: string;
@@ -128,6 +123,7 @@ declare module '$env/static/private' {
 	export const npm_node_execpath: string;
 	export const LC_NUMERIC: string;
 	export const TERM_PROGRAM: string;
+	export const _: string;
 	export const NODE_ENV: string;
 }
 
@@ -189,7 +185,6 @@ declare module '$env/dynamic/private' {
 		XDG_SESSION_TYPE: string;
 		npm_config_init_module: string;
 		SYSTEMD_EXEC_PID: string;
-		_: string;
 		OMF_PATH: string;
 		VSCODE_GIT_ASKPASS_NODE: string;
 		TERMINAL: string;
@@ -197,8 +192,8 @@ declare module '$env/dynamic/private' {
 		MOTD_SHOWN: string;
 		VSCODE_INJECTION: string;
 		HOME: string;
-		LANG: string;
 		LC_PAPER: string;
+		LANG: string;
 		XDG_CURRENT_DESKTOP: string;
 		npm_package_version: string;
 		MEMORY_PRESSURE_WATCH: string;
@@ -216,19 +211,17 @@ declare module '$env/dynamic/private' {
 		npm_config_npm_version: string;
 		XDG_SESSION_CLASS: string;
 		GEMINI_CLI_IDE_WORKSPACE_PATH: string;
-		TERM: string;
 		LC_IDENTIFICATION: string;
+		TERM: string;
 		npm_package_name: string;
 		npm_config_prefix: string;
 		USER: string;
-		GIT_PAGER: string;
-		CUDA_PATH: string;
 		VSCODE_GIT_IPC_HANDLE: string;
+		CUDA_PATH: string;
 		HYPRLAND_INSTANCE_SIGNATURE: string;
 		DISPLAY: string;
 		npm_lifecycle_event: string;
 		SHLVL: string;
-		PAGER: string;
 		LC_TELEPHONE: string;
 		LC_MEASUREMENT: string;
 		MANAGERPIDFDID: string;
@@ -237,12 +230,10 @@ declare module '$env/dynamic/private' {
 		npm_execpath: string;
 		FC_FONTATIONS: string;
 		XDG_RUNTIME_DIR: string;
-		GEMINI_CLI: string;
 		NVCC_CCBIN: string;
 		DEBUGINFOD_URLS: string;
 		npm_package_json: string;
 		LC_TIME: string;
-		GEMINI_CLI_NO_RELAUNCH: string;
 		VSCODE_GIT_ASKPASS_MAIN: string;
 		JOURNAL_STREAM: string;
 		XDG_DATA_DIRS: string;
@@ -260,6 +251,7 @@ declare module '$env/dynamic/private' {
 		npm_node_execpath: string;
 		LC_NUMERIC: string;
 		TERM_PROGRAM: string;
+		_: string;
 		NODE_ENV: string;
 		[key: `PUBLIC_${string}`]: undefined;
 		[key: `${string}`]: string | undefined;

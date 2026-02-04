@@ -224,8 +224,9 @@
   style="transform: translate({parallaxX * -15}px, {parallaxY *
     -15}px) scale(1.1)"
 >
-  <video muted autoplay loop class="w-screen h-screen object-cover relative filter brightness-[0.7] blur-[4px]">
-    <source src="/bgs/selena_pianissimo_scene.mp4">
+  <video muted autoplay loop class="w-screen h-screen object-cover relative filter brightness-[0.7] blur-[6px]">
+    <source src="/bgs/bg-low-bitrate.webm" type="video/webm">
+    <source src="/bgs/bg-high-bitrate.mp4" type="video/mp4">  
   </video>
   <!-- <img
     alt="Background"
@@ -262,9 +263,9 @@
               class="w-20 h-20 rounded-full bg-gray-300 overflow-hidden flex-shrink-0 border-[1.5px] border-primary"
             >
               <img
-                alt="HxprLee's profile"
-                class="w-full h-full bg-[#dcdcdc]"
                 src="/imgs/pfp-icon.webp"
+                alt="/imgs/pfp-icon.png"
+                class="w-full h-full bg-[#dcdcdc]"
               />
             </div>
             <div>
@@ -470,8 +471,8 @@
             <div class="flex flex-col items-left gap-3 mb-4">
               <img
                 class="w-full h-[92px] object-cover"
-                alt="Background"
                 src="/imgs/banner.webp"
+                alt="/imgs/banner.png"
               />
               <div class="absolute ml-5 mt-8">
                 <img
@@ -683,12 +684,12 @@
 
               <div class="absolute inset-[3px] rounded-full overflow-hidden">
                 <img
-                  alt="Album Art"
+                  src="/imgs/artwork.webp"
+                  alt="/imgs/artwork.png"
                   class="w-full h-full object-cover animate-spin-slow"
                   style="animation-play-state: {isPlaying
                     ? 'running'
                     : 'paused'}"
-                  src="/imgs/artwork.webp"
                 />
 
                 <!-- Play/Pause Overlay -->

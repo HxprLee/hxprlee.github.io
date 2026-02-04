@@ -36,6 +36,6 @@ declare module "$app/types" {
 		};
 		Pathname(): "/";
 		ResolvedPathname(): `${"" | `/${string}`}${ReturnType<AppTypes['Pathname']>}`;
-		Asset(): "/.nojekyll" | "/audios/bg-audio.mp3" | "/bgs/selena_pianissimo_scene.mp4" | "/imgs/artwork.webp" | "/imgs/banner.webp" | "/imgs/pfp-icon.webp" | "/svgs/0.svg" | "/svgs/1.svg" | "/svgs/2.svg" | "/svgs/3.svg" | "/svgs/logo.svg" | string & {};
+		Asset(): "/.nojekyll" | "/audios/bg-audio.mp3" | "/bgs/bg-high-bitrate.mp4" | "/bgs/bg-low-bitrate.webm" | "/imgs/artwork.png" | "/imgs/artwork.webp" | "/imgs/banner.png" | "/imgs/banner.webp" | "/imgs/pfp-icon.png" | "/imgs/pfp-icon.webp" | "/svgs/0.svg" | "/svgs/1.svg" | "/svgs/2.svg" | "/svgs/3.svg" | "/svgs/logo.svg" | string & {};
 	}
 }

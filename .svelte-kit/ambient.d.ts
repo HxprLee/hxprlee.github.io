@@ -64,8 +64,8 @@ declare module '$env/static/private' {
 	export const MOTD_SHOWN: string;
 	export const VSCODE_INJECTION: string;
 	export const HOME: string;
-	export const LC_PAPER: string;
 	export const LANG: string;
+	export const LC_PAPER: string;
 	export const XDG_CURRENT_DESKTOP: string;
 	export const npm_package_version: string;
 	export const MEMORY_PRESSURE_WATCH: string;
@@ -88,8 +88,8 @@ declare module '$env/static/private' {
 	export const npm_package_name: string;
 	export const npm_config_prefix: string;
 	export const USER: string;
-	export const VSCODE_GIT_IPC_HANDLE: string;
 	export const CUDA_PATH: string;
+	export const VSCODE_GIT_IPC_HANDLE: string;
 	export const HYPRLAND_INSTANCE_SIGNATURE: string;
 	export const DISPLAY: string;
 	export const npm_lifecycle_event: string;
@@ -192,8 +192,8 @@ declare module '$env/dynamic/private' {
 		MOTD_SHOWN: string;
 		VSCODE_INJECTION: string;
 		HOME: string;
-		LC_PAPER: string;
 		LANG: string;
+		LC_PAPER: string;
 		XDG_CURRENT_DESKTOP: string;
 		npm_package_version: string;
 		MEMORY_PRESSURE_WATCH: string;
@@ -216,8 +216,8 @@ declare module '$env/dynamic/private' {
 		npm_package_name: string;
 		npm_config_prefix: string;
 		USER: string;
-		VSCODE_GIT_IPC_HANDLE: string;
 		CUDA_PATH: string;
+		VSCODE_GIT_IPC_HANDLE: string;
 		HYPRLAND_INSTANCE_SIGNATURE: string;
 		DISPLAY: string;
 		npm_lifecycle_event: string;

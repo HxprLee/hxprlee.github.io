@@ -3,7 +3,6 @@ name: Deploy to Nekoweb
 on:
   push:
     branches: 'main'
-
   workflow_dispatch:
 
 jobs:

@@ -49,7 +49,7 @@
                 class="absolute inset-0 transition-opacity duration-300"
                 style="opacity: {Math.min(progress * 2, 100) / 100}"
             >
-                <img src="/svgs/0.svg" alt="Loader 0" class="w-full h-full" />
+                <img src="/svgs/0.svg" alt="Loader 0" class="w-full h-full" fetchpriority=high/>
             </div>
         {/if}
 
@@ -58,7 +58,7 @@
                 class="absolute inset-0 transition-opacity duration-300"
                 style="opacity: {Math.min((progress - 50) * 2, 100) / 100}"
             >
-                <img src="/svgs/1.svg" alt="Loader 1" class="w-full h-full" />
+                <img src="/svgs/1.svg" alt="Loader 1" class="w-full h-full" fetchpriority=high/>
             </div>
         {/if}
 
@@ -69,6 +69,7 @@
                     src="/svgs/2.svg"
                     alt="Loader 2"
                     class="w-full h-full absolute inset-0"
+                    fetchpriority=high
                 />
             </div>
             <div
@@ -79,6 +80,7 @@
                     src="/svgs/3.svg"
                     alt="Loader 3"
                     class="w-full h-full absolute inset-0"
+                    fetchpriority=high
                 />
             </div>
         {/if}
